@@ -1,29 +1,30 @@
 package tile;
 
 import window.Table;
-import javafx.util.Pair;
+import utility.Pair;
 import javafx.scene.paint.Color;
 
 public class Tile {
 	protected static int RECT_SIZE = 20;
 	protected static Color COLOR;
 	
-	protected static Pair<Integer, Integer>[] template;
+	protected static Pair[] template = new Pair[4];
 	protected static int blockSize;
 	
-	protected Pair<Integer, Integer> refPoint;
-	protected Pair<Integer, Integer>[] shape;
+	protected Pair refPoint;
+	protected Pair[] shape;
 	protected int turnState;
 	protected Table table;
 	
 	protected Tile(int x, int y, Table table) {
+		shape = new Pair[4];
 		turnState = 0;
-		refPoint = new Pair<Integer, Integer>(x, y);
+		refPoint = new Pair(x, y);
 		
 		this.table = table;
 		
 		for(int i = 0; i < 4; ++i) {
-			shape[i] = new Pair<Integer, Integer>(template[i].getKey(), template[i].getValue());
+			shape[i] = new Pair(template[i].getKey(), template[i].getValue());
 		}
 	}
 	
@@ -31,11 +32,11 @@ public class Tile {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey() + 1;
 			int newy = refPoint.getValue() + shape[i].getValue();
-			if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
+			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
 		}
-		refPoint = new Pair<Integer, Integer>(refPoint.getKey() + 1, refPoint.getValue());
+		refPoint.setKey(refPoint.getKey() + 1);
 		return true;
 	}
 	
@@ -43,11 +44,11 @@ public class Tile {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey();
 			int newy = refPoint.getValue() + shape[i].getValue() - 1;
-			if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
+			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
 		}
-		refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() - 1);
+		refPoint.setValue(refPoint.getValue() - 1);
 		return true;
 	}
 	
@@ -55,11 +56,11 @@ public class Tile {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey();
 			int newy = refPoint.getValue() + shape[i].getValue() + 1;
-			if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
+			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
 		}
-		refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() + 1);
+		refPoint.setValue(refPoint.getValue() + 1);
 		return true;
 	}
 	
@@ -67,7 +68,7 @@ public class Tile {
 		for(int i = 0; i < 4; ++i) {
 			int newx = shape[i].getValue() - shiftUp;
 			int newy = blockSize - shape[i].getKey();
-			if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
+			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
 		}
@@ -77,7 +78,7 @@ public class Tile {
 	protected void justTurnClockwise() {
 		turnState = (turnState + 1) % 4;
 		for(int i = 0; i < 4; ++i) {
-			shape[i] = new Pair<Integer, Integer>(shape[i].getValue(), blockSize - shape[i].getKey());
+			shape[i] = new Pair(shape[i].getValue(), blockSize - shape[i].getKey());
 		}
 	}
 	
@@ -139,11 +140,11 @@ public class Tile {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey() - 1;
 			int newy = refPoint.getValue() + shape[i].getValue();
-			if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
+			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
 		}
-		refPoint = new Pair<Integer, Integer>(refPoint.getKey() - 1, refPoint.getValue());
+		refPoint.setKey(refPoint.getKey() - 1);
 		return true;
 	}
 	
@@ -153,32 +154,32 @@ public class Tile {
 		}
 		
 		if(turnState == 0) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey() - 1, refPoint.getValue());
+			refPoint.setKey(refPoint.getKey() - 1);
 			for(int i = 0; i < 4; ++i) {
 				int newx = refPoint.getKey() + shape[i].getKey();
 				int newy = refPoint.getValue() + shape[i].getValue();
-				if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
-					refPoint = new Pair<Integer, Integer>(refPoint.getKey() + 1, refPoint.getValue());
+				if(table.isCollided(new Pair(newx, newy))) {
+					refPoint.setKey(refPoint.getKey() + 1);
 					return false;
 				}
 			}
 		} else if(turnState == 1) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() + 1);
+			refPoint.setValue(refPoint.getValue() + 1);
 			for(int i = 0; i < 4; ++i) {
 				int newx = refPoint.getKey() + shape[i].getKey();
 				int newy = refPoint.getValue() + shape[i].getValue();
-				if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
-					refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() - 1);
+				if(table.isCollided(new Pair(newx, newy))) {
+					refPoint.setValue(refPoint.getValue() - 1);
 					return false;
 				}
 			}
 		} else if(turnState == 3) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() - 1);
+			refPoint.setValue(refPoint.getValue() - 1);
 			for(int i = 0; i < 4; ++i) {
 				int newx = refPoint.getKey() + shape[i].getKey();
 				int newy = refPoint.getValue() + shape[i].getValue();
-				if(table.isCollided(new Pair<Integer, Integer>(newx, newy))) {
-					refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() + 1);
+				if(table.isCollided(new Pair(newx, newy))) {
+					refPoint.setValue(refPoint.getValue() + 1);
 					return false;
 				}
 			}
@@ -189,15 +190,35 @@ public class Tile {
 	
 	protected void unpush() {
 		if(turnState == 0) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey() + 1, refPoint.getValue());
+			refPoint.setKey(refPoint.getKey() + 1);
 		} else if(turnState == 1) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() - 1);
+			refPoint.setValue(refPoint.getValue() - 1);
 		} else if(turnState == 3) {
-			refPoint = new Pair<Integer, Integer>(refPoint.getKey(), refPoint.getValue() + 1);
+			refPoint.setValue(refPoint.getValue() + 1);
 		}
 	}
 	
 	public void hardDrop() {
 		while(moveDown());
+	}
+	
+	public Pair getRefPoint() {
+		return refPoint;
+	}
+	
+	public Pair[] getShape() {
+		return shape;
+	}
+	
+	public int getTurnState() {
+		return turnState;
+	}
+	
+	public int getBlockSize() {
+		return blockSize;
+	}
+	
+	public Color getColor() {
+		return COLOR;
 	}
 }
