@@ -4,12 +4,8 @@ import window.Table;
 import utility.Pair;
 import javafx.scene.paint.Color;
 
-public class Tile {
+public abstract class Tile {
 	protected static int RECT_SIZE = 20;
-	protected static Color COLOR;
-	
-	protected static Pair[] template = new Pair[4];
-	protected static int blockSize;
 	
 	protected Pair refPoint;
 	protected Pair[] shape;
@@ -24,7 +20,7 @@ public class Tile {
 		this.table = table;
 		
 		for(int i = 0; i < 4; ++i) {
-			shape[i] = new Pair(template[i].getKey(), template[i].getValue());
+			shape[i] = new Pair(getTemplate()[i].getKey(), getTemplate()[i].getValue());
 		}
 	}
 	
@@ -40,7 +36,7 @@ public class Tile {
 		return true;
 	}
 	
-	public boolean canMoveLeft() {
+	public boolean moveLeft() {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey();
 			int newy = refPoint.getValue() + shape[i].getValue() - 1;
@@ -52,7 +48,7 @@ public class Tile {
 		return true;
 	}
 	
-	public boolean canMoveRight() {
+	public boolean moveRight() {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey();
 			int newy = refPoint.getValue() + shape[i].getValue() + 1;
@@ -66,8 +62,8 @@ public class Tile {
 	
 	protected boolean canTurnClockwise(int shiftUp) {
 		for(int i = 0; i < 4; ++i) {
-			int newx = shape[i].getValue() - shiftUp;
-			int newy = blockSize - shape[i].getKey();
+			int newx = refPoint.getKey() + shape[i].getValue() - shiftUp;
+			int newy = refPoint.getValue() + getBlockSize() - shape[i].getKey();
 			if(table.isCollided(new Pair(newx, newy))) {
 				return false;
 			}
@@ -78,7 +74,7 @@ public class Tile {
 	protected void justTurnClockwise() {
 		turnState = (turnState + 1) % 4;
 		for(int i = 0; i < 4; ++i) {
-			shape[i] = new Pair(shape[i].getValue(), blockSize - shape[i].getKey());
+			shape[i] = new Pair(shape[i].getValue(), getBlockSize() - shape[i].getKey());
 		}
 	}
 	
@@ -214,11 +210,7 @@ public class Tile {
 		return turnState;
 	}
 	
-	public int getBlockSize() {
-		return blockSize;
-	}
-	
-	public Color getColor() {
-		return COLOR;
-	}
+	public abstract Pair[] getTemplate();
+	public abstract int getBlockSize();
+	public abstract Color getColor();
 }

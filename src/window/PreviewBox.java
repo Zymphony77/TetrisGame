@@ -14,19 +14,41 @@ public class PreviewBox extends StackPane {
 	private Rectangle[][] table;
 	private GridPane gridpane;
 	private Tile tile;
+	private Rectangle overlay;
 	
-	public PreviewBox(Tile tile) {
+	public PreviewBox() {
 		gridpane = new GridPane();
 		gridpane.setHgap(2);
 		gridpane.setVgap(2);
 		gridpane.setAlignment(Pos.CENTER);
 		
+		overlay = new Rectangle(46, 46,Color.LIGHTGRAY);
+		overlay.setOpacity(0);
+		
+		getChildren().addAll(new Rectangle(46, 46, Color.GRAY), gridpane, overlay);
+		
+		setAlignment(Pos.CENTER);
+		setPrefSize(46, 46);
+	}
+	
+	public void pause() {
+		overlay.setOpacity(0.85);
+	}
+	
+	public void unpause() {
+		overlay.setOpacity(0);
+	}
+	
+	public void setTile(Tile tile) {
+		clear();
+		
+		this.tile = tile;
 		tableSize = tile.getBlockSize() + 1;
 		
 		table = new Rectangle[tableSize][tableSize];
 		for(int i = 0; i < tableSize; ++i) {
 			for(int j = 0; j < tableSize; ++j) {
-				table[i][j] = new Rectangle(RECT_SIZE, RECT_SIZE, Color.WHITE);
+				table[i][j] = createBackground();
 			}
 		}
 		
@@ -40,11 +62,6 @@ public class PreviewBox extends StackPane {
 				gridpane.add(table[i][j], j, i);
 			}
 		}
-		
-		getChildren().add(gridpane);
-		
-		setAlignment(Pos.CENTER);
-		setPrefSize(46, 46);
 	}
 	
 	public Tile getTile() {
@@ -52,11 +69,13 @@ public class PreviewBox extends StackPane {
 	}
 	
 	public void clear() {
-		clear();
-		for(int i = 0; i < tile.getBlockSize(); ++i) {
-			for(int j = 0; j < tile.getBlockSize(); ++j) {
-				table[i][j] = new Rectangle(RECT_SIZE, RECT_SIZE, Color.GRAY);
-			}
-		}
+		tile = null;
+		gridpane.getChildren().clear();
+	}
+	
+	private Rectangle createBackground() {
+		Rectangle background = new Rectangle(RECT_SIZE, RECT_SIZE);
+		background.setOpacity(0);
+		return background;
 	}
 }

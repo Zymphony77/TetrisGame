@@ -5,6 +5,10 @@ import javafx.scene.paint.Color;
 import utility.Pair;
 
 public class TetrisI extends Tile implements EquivalentTurn {
+	private static Color COLOR;
+	private static Pair[] template = new Pair[4];
+	private static int blockSize;
+	
 	static {
 		COLOR = Color.AQUA;
 		blockSize = 3;
@@ -17,6 +21,18 @@ public class TetrisI extends Tile implements EquivalentTurn {
 		super(x, y, table);
 	}
 	
+	public Pair[] getTemplate() {
+		return template;
+	}
+	
+	public int getBlockSize() {
+		return blockSize;
+	}
+	
+	public Color getColor() {
+		return COLOR;
+	}
+	
 	public void changeTurn() {
 		if(turnState == 0) {
 			refPoint.setKey(refPoint.getKey() + 1);
@@ -27,6 +43,10 @@ public class TetrisI extends Tile implements EquivalentTurn {
 		} else {
 			refPoint.setValue(refPoint.getValue() + 1);
 		}
+
+		justTurnClockwise();
+		justTurnClockwise();
+		
 		turnState = (turnState + 2) % 4;
 	}
 }

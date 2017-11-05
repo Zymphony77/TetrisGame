@@ -5,6 +5,10 @@ import javafx.scene.paint.Color;
 import utility.Pair;
 
 public class TetrisL extends Tile {
+	private static Color COLOR;
+	private static Pair[] template = new Pair[4];
+	private static int blockSize;
+	
 	static {
 		COLOR = Color.ORANGE;
 		blockSize = 2;
@@ -16,5 +20,17 @@ public class TetrisL extends Tile {
 	
 	public TetrisL(int x, int y, Table table) {
 		super(x, y, table);
+	}
+	
+	public Pair[] getTemplate() {
+		return template;
+	}
+	
+	public int getBlockSize() {
+		return blockSize;
+	}
+	
+	public Color getColor() {
+		return COLOR;
 	}
 }
