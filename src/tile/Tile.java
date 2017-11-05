@@ -208,6 +208,10 @@ public abstract class Tile {
 		while(moveDown());
 	}
 	
+	public void setRefPoint(Pair position) {
+		refPoint = new Pair(position);
+	}
+	
 	public Pair getRefPoint() {
 		return refPoint;
 	}

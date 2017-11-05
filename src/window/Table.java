@@ -15,8 +15,6 @@ public class Table extends GridPane {
 	private Rectangle[][] table;
 	
 	public Table() {
-		Rectangle test = new Rectangle();
-		
 		setPadding(new Insets(5));
 		setHgap(2);
 		setVgap(2);

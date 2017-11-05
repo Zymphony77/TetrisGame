@@ -25,6 +25,8 @@ public class PreviewBox extends StackPane {
 		overlay = new Rectangle(46, 46,Color.LIGHTGRAY);
 		overlay.setOpacity(0);
 		
+		tile = null;
+		
 		getChildren().addAll(new Rectangle(46, 46, Color.GRAY), gridpane, overlay);
 		
 		setAlignment(Pos.CENTER);
@@ -43,6 +45,7 @@ public class PreviewBox extends StackPane {
 		clear();
 		
 		this.tile = tile;
+		
 		tableSize = tile.getBlockSize() + 1;
 		
 		table = new Rectangle[tableSize][tableSize];

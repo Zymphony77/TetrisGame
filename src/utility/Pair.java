@@ -9,6 +9,11 @@ public class Pair {
 		value = 0;
 	}
 	
+	public Pair(Pair pair) {
+		key = pair.getKey();
+		value = pair.getValue();
+	}
+	
 	public Pair(int key, int value) {
 		this.key = key;
 		this.value = value;

@@ -13,9 +13,13 @@ public class Handler {
 			if(!Main.isStarted) {
 				Main.isStarted = true;
 				Main.timeline.play();
+				update();
 			}
 			
-			unpause();
+			if(!Main.isDead) {
+				unpause();
+			}
+			
 			return;
 		}
 		
@@ -61,8 +65,31 @@ public class Handler {
 			
 			Main.timeline.stop();
 			update();
-			update();
 			Main.timeline.play();
+		}
+		
+		if(event.getCode() == KeyCode.SHIFT && !Main.holdChanged) {
+			Main.holdChanged = true;
+			
+			Main.tablePanel.undraw(Main.randomTile);
+			
+			Main.randomTile.setRefPoint(new Pair(-4, 4));
+			
+			Tile tmp = Main.randomTile;
+			Main.randomTile = Main.holdPanel.getTile();
+			Main.holdPanel.setTile(tmp);
+			
+			if(Main.randomTile == null) {
+				update();
+			}
+			
+			while(!Main.tablePanel.insideTable(Main.randomTile)) {
+				if(!Main.randomTile.moveDown()) {
+					break;
+				}
+			}
+			
+			Main.tablePanel.draw(Main.randomTile);
 		}
 	}
 	
@@ -85,6 +112,7 @@ public class Handler {
 					break;
 				}
 			}
+			
 			Main.tablePanel.draw(Main.randomTile);
 			return;
 		} else {
@@ -95,19 +123,26 @@ public class Handler {
 		Main.tablePanel.draw(Main.randomTile);
 		
 		if(!moveDown) {
+			Main.holdChanged = false;
+			
 			if(Main.tablePanel.outsideTable(Main.randomTile)) {
-				Main.isDead = true;
-				Main.tablePause.dead();
-				Main.holdPanel.pause();
-				for(int i = 0; i < 3; ++i) {
-					Main.nextPanel[i].pause();
-				}
-				Main.timeline.stop();
+				lose();
 			} else {
 				Main.randomTile = null;
 				updateLineCount();
+				update();
 			}
 		}
+	}
+	
+	private static void lose() {
+		Main.isDead = true;
+		Main.tablePause.dead();
+		Main.holdPanel.pause();
+		for(int i = 0; i < 3; ++i) {
+			Main.nextPanel[i].pause();
+		}
+		Main.timeline.stop();
 	}
 	
 	private static void updateLineCount() {
@@ -149,13 +184,7 @@ public class Handler {
 			tile = new TetrisZ(-4, 4, Main.tablePanel);
 			break;
 		}
-		
-		while(!Main.tablePanel.insideTable(tile)) {
-			if(!tile.moveDown()) {
-				break;
-			}
-		}
-		
+				
 		return tile;
 	}
 	

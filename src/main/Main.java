@@ -37,6 +37,7 @@ public class Main extends Application {
 	static boolean isStarted;
 	static boolean isPausing;
 	static boolean isDead;
+	static boolean holdChanged;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -116,6 +117,7 @@ public class Main extends Application {
 			isStarted = false;
 			isPausing = true;
 			isDead = false;
+			holdChanged = false;
 			randomTile = null;
 		});
 		
