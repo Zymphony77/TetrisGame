@@ -47,7 +47,5 @@ public class TetrisS extends Tile implements EquivalentTurn {
 		
 		justTurnClockwise();
 		justTurnClockwise();
-		
-		turnState = (turnState + 2) % 4;
 	}
 }

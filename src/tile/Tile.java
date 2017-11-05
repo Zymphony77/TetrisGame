@@ -94,7 +94,7 @@ public abstract class Tile {
 		
 		// Equivalent Turn
 		if(this instanceof EquivalentTurn) {
-			((EquivalentTurn)this).changeTurn();
+			((EquivalentTurn) this).changeTurn();
 			
 			// Without Push Upwards
 			if(canTurnClockwise(0)) {
@@ -109,7 +109,7 @@ public abstract class Tile {
 				return true;
 			}
 			
-			((EquivalentTurn)this).changeTurn();
+			((EquivalentTurn) this).changeTurn();
 		}
 		return false;
 	}
@@ -121,12 +121,22 @@ public abstract class Tile {
 		
 		// Push first
 		if(push()) {
-			
 			if(tryTurningClockwise()) {
 				return true;
 			}
-			
 			unpush();
+		}
+		
+		// Equivalent Push
+		if(this instanceof EquivalentTurn) {
+			((EquivalentTurn) this).changeTurn();
+			if(push()) {
+				if(tryTurningClockwise()) {
+					return true;
+				}
+				unpush();
+			}
+			((EquivalentTurn) this).changeTurn();
 		}
 		
 		return false;

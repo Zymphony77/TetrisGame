@@ -58,8 +58,11 @@ public class Handler {
 			Main.tablePanel.undraw(Main.randomTile);
 			Main.randomTile.hardDrop();
 			Main.tablePanel.draw(Main.randomTile);
+			
+			Main.timeline.stop();
 			update();
 			update();
+			Main.timeline.play();
 		}
 	}
 	
@@ -102,10 +105,9 @@ public class Handler {
 				Main.timeline.stop();
 			} else {
 				Main.randomTile = null;
+				updateLineCount();
 			}
 		}
-		
-		updateLineCount();
 	}
 	
 	private static void updateLineCount() {
