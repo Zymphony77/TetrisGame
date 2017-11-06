@@ -11,6 +11,8 @@ public class Table extends GridPane {
 	public static final int WIDTH = 10;
 	public static final int HEIGHT = 20;
 	public static final int RECT_SIZE = 20;
+	public static final Color GHOST_COLOR = Color.FLORALWHITE;
+	public static final Color CLEAR_COLOR = Color.WHITE;
 	
 	private Rectangle[][] table;
 	
@@ -41,11 +43,34 @@ public class Table extends GridPane {
 			return false;
 		}
 		
-		return !table[position.getKey()][position.getValue()].getFill().equals(createBackground().getFill());
+		return !(table[position.getKey()][position.getValue()].getFill().equals(createBackground().getFill()) ||
+				table[position.getKey()][position.getValue()].getFill().equals(GHOST_COLOR));
 	}
 	
-	public int lineClear() {
+	public int colorFullLine() {
 		int lineCount = 0;
+		boolean clear;
+		for(int i = HEIGHT - 1; i >= 0; --i) {
+			clear = true;
+			if(clear) {
+				for(int j = 0; j < WIDTH; ++j) {
+					if(table[i][j].getFill().equals(createBackground().getFill())) {
+						clear = false;
+						break;
+					}
+				}
+				if(clear) {
+					for(int j = 0; j < WIDTH; ++j) {
+						table[i][j].setFill(CLEAR_COLOR);
+					}
+					++lineCount;
+				}
+			}
+		}
+		return lineCount;
+	}
+	
+	public void lineClear() {
 		boolean clear;
 		for(int i = HEIGHT - 1; i >= 0; --i) {
 			clear = true;
@@ -58,11 +83,9 @@ public class Table extends GridPane {
 				}
 				if(clear) {
 					shiftDown(i);
-					++lineCount;
 				}
 			}
 		}
-		return lineCount;
 	}
 	
 	public void shiftDown(int start) {
@@ -112,6 +135,53 @@ public class Table extends GridPane {
 			table[x][y] = createBackground();
 			add(table[x][y], y, x);
 		}
+	}
+	
+	public void drawGhost(Tile tile) {
+		Pair refPoint = new Pair(tile.getRefPoint());
+		tile.hardDrop();
+		
+		for(int i = 0; i < 4; ++i) {
+			int x = tile.getRefPoint().getKey() + tile.getShape()[i].getKey();
+			int y = tile.getRefPoint().getValue() + tile.getShape()[i].getValue();
+			
+			if(x < 0) {
+				continue;
+			}
+			
+			getChildren().remove(table[x][y]);
+			
+			table[x][y] = new Rectangle(RECT_SIZE, RECT_SIZE, GHOST_COLOR);
+			table[x][y].setOpacity(0.5);
+			add(table[x][y], y, x);
+		}
+		
+		tile.setRefPoint(refPoint);
+	}
+	
+	public void undrawGhost(Tile tile) {
+		Pair refPoint = new Pair(tile.getRefPoint());
+		tile.hardDrop();
+		
+		for(int i = 0; i < 4; ++i) {
+			int x = tile.getRefPoint().getKey() + tile.getShape()[i].getKey();
+			int y = tile.getRefPoint().getValue() + tile.getShape()[i].getValue();
+			
+			if(x < 0) {
+				continue;
+			}
+			
+			if(table[x][y].getFill().equals(createBackground().getFill())) {
+				continue;
+			}
+			
+			getChildren().remove(table[x][y]);
+			
+			table[x][y] = createBackground();
+			add(table[x][y], y, x);
+		}
+		
+		tile.setRefPoint(refPoint);
 	}
 	
 	public void clear() {

@@ -113,6 +113,8 @@ public class Main extends Application {
 			
 			pauseText.setText("");
 			
+			lineCountText.setText("0");
+			
 			lineCount = 0;
 			isStarted = false;
 			isPausing = true;

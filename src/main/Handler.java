@@ -1,6 +1,10 @@
 package main;
 
 import javafx.scene.input.KeyEvent;
+import javafx.util.Duration;
+import javafx.animation.Timeline;
+import javafx.animation.Animation.Status;
+import javafx.animation.KeyFrame;
 import javafx.scene.input.KeyCode;
 import java.util.Random;
 import tile.*;
@@ -36,31 +40,41 @@ public class Handler {
 		
 		if(event.getCode() == KeyCode.LEFT) {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			Main.randomTile.moveLeft();
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 		}
 		
 		if(event.getCode() == KeyCode.RIGHT) {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			Main.randomTile.moveRight();
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 		}
 		
 		if(event.getCode() == KeyCode.DOWN) {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			Main.randomTile.moveDown();
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 		}
 		
 		if(event.getCode() == KeyCode.UP) {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			Main.randomTile.turnClockwise();
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 		}
 		
 		if(event.getCode() == KeyCode.SPACE) {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			Main.randomTile.hardDrop();
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 			
 			Main.timeline.stop();
@@ -72,6 +86,7 @@ public class Handler {
 			Main.holdChanged = true;
 			
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 			
 			Main.randomTile.setRefPoint(new Pair(-4, 4));
 			
@@ -89,6 +104,7 @@ public class Handler {
 				}
 			}
 			
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
 		}
 	}
@@ -113,13 +129,17 @@ public class Handler {
 				}
 			}
 			
+			Main.tablePanel.drawGhost(Main.randomTile);
 			Main.tablePanel.draw(Main.randomTile);
+			
 			return;
 		} else {
 			Main.tablePanel.undraw(Main.randomTile);
+			Main.tablePanel.undrawGhost(Main.randomTile);
 		}
 		
 		boolean moveDown = Main.randomTile.moveDown();
+		Main.tablePanel.drawGhost(Main.randomTile);
 		Main.tablePanel.draw(Main.randomTile);
 		
 		if(!moveDown) {
@@ -129,8 +149,9 @@ public class Handler {
 				lose();
 			} else {
 				Main.randomTile = null;
-				updateLineCount();
-				update();
+				if(!updateLineCount()) {
+					update();
+				}
 			}
 		}
 	}
@@ -145,15 +166,30 @@ public class Handler {
 		Main.timeline.stop();
 	}
 	
-	private static void updateLineCount() {
-		int lineClear = Main.tablePanel.lineClear();
+	private static boolean updateLineCount() {
+		int lineClear = Main.tablePanel.colorFullLine();
 		
 		if(lineClear == 0) {
-			return;
+			return false;
 		}
 		
-		Main.lineCount += lineClear;
-		Main.lineCountText.setText("" + Main.lineCount);
+		Timeline delay = new Timeline(new KeyFrame(Duration.millis(150), event -> {}));
+		delay.setCycleCount(1);
+		delay.setOnFinished(event -> {
+			Main.tablePanel.lineClear();
+			
+			Main.lineCount += lineClear;
+			Main.lineCountText.setText("" + Main.lineCount);
+			
+			update();
+			
+			Main.timeline.play();
+		});
+		
+		Main.timeline.stop();
+		delay.play();
+		
+		return true;
 	}
 	
 	private static Tile randomTile() {
@@ -183,6 +219,14 @@ public class Handler {
 		default:
 			tile = new TetrisZ(-4, 4, Main.tablePanel);
 			break;
+		}
+		
+		if(Main.nextPanel[1].getTile() != null) {
+			if(Main.nextPanel[0].getTile().getClass() == Main.nextPanel[1].getTile().getClass()) {
+				while(tile.getClass() == Main.nextPanel[1].getTile().getClass()) {
+					tile = randomTile();
+				}
+			}
 		}
 				
 		return tile;

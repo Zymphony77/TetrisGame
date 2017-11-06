@@ -24,6 +24,15 @@ public abstract class Tile {
 		}
 	}
 	
+	public Tile(Tile tile) {
+		for(int i = 0; i < 4; ++i) {
+			shape[i] = new Pair(tile.shape[i]);
+		}
+		turnState = tile.turnState;
+		refPoint = new Pair(tile.refPoint);
+		table = tile.table;
+	}
+	
 	public boolean moveDown() {
 		for(int i = 0; i < 4; ++i) {
 			int newx = refPoint.getKey() + shape[i].getKey() + 1;
